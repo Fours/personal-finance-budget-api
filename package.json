@@ -1,0 +1,26 @@
+{
+  "name": "personal-finance-budget-api",
+  "version": "1.0.0",
+  "description": "A REST api for my personal finance app",
+  "license": "ISC",
+  "author": "Kyle Willett",
+  "type": "module",
+  "main": "index.ts",
+  "scripts": {
+    "start": "npx tsc && node src/index.ts",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "eslint": "^10.3.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "uuid": "^14.0.0"
+  }
+}
