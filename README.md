@@ -8,6 +8,11 @@ Install and run app
 npm install
 npm run start
 ```
+Setup db tables from a fresh db (recreate db and run all prisma migrations)
+```
+npx prisma migrate reset
+```
+
 
 ## About
 This ia the api for my finance/budgeting app Ledger. The stack is node, express, prisma, with Postgres for persistence.
