@@ -11,10 +11,6 @@ Setup db tables from a fresh db (recreate db and run all prisma migrations):
 ```
 npx prisma migrate reset
 ```
-Generate prisma client:
-```
-npx prisma generate
-```
 Run app:
 ```
 npm run start

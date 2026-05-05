@@ -8,7 +8,8 @@
   "main": "index.ts",
   "scripts": {
     "start": "npx tsc && node src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "npx prisma generate"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
