@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:latest
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=dbuser
       - POSTGRES_PASSWORD=dbpassword
