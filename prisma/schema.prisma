@@ -17,14 +17,16 @@ model User {
 }
 
 model Category {
-    id    String  @id
-    name  String  @unique
-    hue   Int
-    kind  String
+    id            String  @id
+    name          String  @unique
+    hue           Int
+    kind          String
+    transactions  Transaction[]
+    budgets       Budget[]
 }
 
 model Transaction {
-    id          String  @id
+    id          String    @id
     userId      String
     date        String
     merchant    String
@@ -33,14 +35,16 @@ model Transaction {
     categoryId  String
     account     String
     kind        String
-    user        User    @relation(fields: [userId], references: [id])
+    user        User      @relation(fields: [userId], references: [id])
+    category    Category  @relation(fields: [categoryId], references: [id])
 }
 
 model Budget {
-    id          String  @id
+    id          String    @id
     userId      String
     categoryId  String
     limit       Int
     rollover    Boolean
-    user        User    @relation(fields: [userId], references: [id])
+    user        User      @relation(fields: [userId], references: [id])
+    category    Category  @relation(fields: [categoryId], references: [id])
 }
