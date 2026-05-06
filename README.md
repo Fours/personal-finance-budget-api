@@ -21,7 +21,8 @@ npm run dev
 ```
 
 ### Reference
-If schemas change, create a new named prisma migration:
+If schemas change, create a new named prisma migration and regenerate client:
 ```
 npx prisma migrate dev --name my_migration_name
+npx prisma generate
 ```
