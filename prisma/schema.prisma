@@ -12,6 +12,8 @@ model User {
     id            String  @id
     email         String  @unique
     name          String
+    password      String  @default("")
+    roles         String[]  @default([])
     transactions  Transaction[]
     budgets       Budget[]
 }

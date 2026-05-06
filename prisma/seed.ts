@@ -1,8 +1,11 @@
 import { prisma } from "../src/lib/prisma";
+import bcrypt from "bcrypt"
 
 async function main() {
 
-    const userId = "5d6863bd-beec-4e07-bf4f-a39098d1da97"
+    const userId = "5d6863bd-beec-4e07-bf4f-a39098d1da97"    
+    const password = "password" // for dev purposes
+    const passwordHash = bcrypt.hashSync(password, 10);
     
     await prisma.user.upsert({
         where: { id: userId },
@@ -10,7 +13,9 @@ async function main() {
         create: {
             id: userId,
             email: "kylewillett@email.com",
-            name: "Kyle Willett"
+            password: passwordHash,
+            name: "Kyle Willett",
+            roles: ["admin", "user"]
         }
     })
     
