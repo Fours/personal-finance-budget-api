@@ -7,6 +7,7 @@
   "type": "module",
   "main": "index.ts",
   "scripts": {
+    "dev": "node --watch src/index.ts",
     "start": "npx tsc && node src/index.ts",
     "test": "jest",
     "postinstall": "npx prisma generate"

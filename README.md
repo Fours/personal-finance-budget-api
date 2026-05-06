@@ -15,9 +15,9 @@ Setup db tables from a fresh db (recreate db and run all prisma migrations) then
 npx prisma migrate reset
 npx prisma db seed
 ```
-Run app:
+Run app (and watch for changes):
 ```
-npm run start
+npm run dev
 ```
 
 ### Reference
