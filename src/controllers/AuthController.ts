@@ -1,12 +1,12 @@
 import jwt from "jsonwebtoken"
 import type { Request, Response } from "express";
-import { messages } from "../dto/Message.ts";
-import type { Message } from "../dto/Message.ts";
+import { messages } from "../dto/response/Message.ts";
+import type { Message } from "../dto/response/Message.ts";
 import type UserHandler from "../domain/handlers/UserHandler.ts";
-import type { Register } from "../dto/Register.ts";
+import type { Register } from "../dto/request/Register.ts";
 import ValidationError from "../domain/errors/ValidationError.ts";
-import type { UserToken } from "../dto/UserToken.ts";
-import type { Login } from "../dto/Login.ts";
+import type { UserToken } from "../dto/response/UserToken.ts";
+import type { Login } from "../dto/request/Login.ts";
 import NotFound from "../domain/errors/NotFound.ts";
 import type User from "../domain/models/User.ts";
 import Unauthorized from "../domain/errors/Unauthorized.ts";

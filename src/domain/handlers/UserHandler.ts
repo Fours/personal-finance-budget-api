@@ -1,11 +1,11 @@
 import bcrypt from "bcrypt"
 import User from "../models/User.ts";
-import type { Register } from "../../dto/Register";
+import type { Register } from "../../dto/request/Register.ts";
 import type IUserRepository from "../../repositories/IUserRepository";
 import type IUserHandler from "./IUserHandler";
 import NotFound from "../errors/NotFound.ts";
 import Unauthorized from "../errors/Unauthorized.ts";
-import type { Login } from "../../dto/Login.ts";
+import type { Login } from "../../dto/request/Login.ts";
 import ValidationError from "../errors/ValidationError.ts";
 
 export default class UserHandler implements IUserHandler {

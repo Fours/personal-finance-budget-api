@@ -1,5 +1,5 @@
 import { validate } from "uuid"
-import { messages, type Message } from "../dto/Message.ts";
+import { messages, type Message } from "../dto/response/Message.ts";
 import type { Request, Response } from "express";
 import type IUserHandler from "../domain/handlers/IUserHandler";
 import type { User } from "../dto/response/User.ts";

@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt"
-import type { Register } from "../../dto/Register"
+import type { Register } from "../../dto/request/Register.ts"
 import validateEmail from "../../lib/validateEmail.ts"
 import ValidationError from "../errors/ValidationError.ts"
 

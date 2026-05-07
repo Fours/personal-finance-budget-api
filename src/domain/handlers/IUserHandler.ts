@@ -1,5 +1,5 @@
-import type { Login } from "../../dto/Login";
-import type { Register } from "../../dto/Register";
+import type { Login } from "../../dto/request/Login";
+import type { Register } from "../../dto/request/Register";
 import type User from "../models/User";
 
 export default interface IUserHandler {
