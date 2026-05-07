@@ -68,7 +68,7 @@ export default class AuthController {
                 })
             } else if (error instanceof NotFound) {
                 res.status(404).json({
-                    message: `${error.name}: ${error.message}`
+                    message: `${error.message}`
                 })
             } else if (error instanceof Unauthorized) {
                 res.status(401).json({

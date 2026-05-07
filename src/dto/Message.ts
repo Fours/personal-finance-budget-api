@@ -3,5 +3,5 @@ export type Message = {
 }
 
 export const messages = {
-    InternalServerError: { message: "Internal Server Error"}
+    InternalServerError: { message: "Internal server error"}
 }
