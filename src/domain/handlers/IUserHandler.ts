@@ -4,10 +4,12 @@ import type User from "../models/User";
 
 export default interface IUserHandler {
 
-    register: (dto: Register) => Promise<User>
+    register(dto: Register): Promise<User>
 
-    login: (dto: Login) => Promise<User>
+    login(dto: Login): Promise<User>
 
-    getAll: (limit: number, start: number) => Promise<User[]>
+    getAll(limit: number, start: number): Promise<User[]>
+
+    getOne(userId: string): Promise<User>
 
 }

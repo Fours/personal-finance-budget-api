@@ -42,6 +42,8 @@ export default class UserHandler implements IUserHandler {
         return this.userRepo.getAll(limit, start)
     }
 
-
+    async getOne(userId: string): Promise<User> {
+        return this.userRepo.getOne(userId)
+    }
 
 }

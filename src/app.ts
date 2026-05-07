@@ -26,6 +26,7 @@ app.get("/api/auth/validate", authenticate, authController.validate.bind(authCon
 
 // users - admin role required
 app.get("/api/users", authenticate, userController.getAll.bind(userController))
+app.get("/api/users/:id", authenticate, userController.getOne.bind(userController))
 
 app.use((req: Request, res: Response<Message>): void => {
     res.status(404).json({ message: "No endpoint found" })

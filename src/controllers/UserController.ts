@@ -1,7 +1,8 @@
+import { validate } from "uuid"
 import { messages, type Message } from "../dto/Message.ts";
 import type { Request, Response } from "express";
-import type User from "../domain/models/User";
 import type IUserHandler from "../domain/handlers/IUserHandler";
+import type { User } from "../dto/response/User.ts";
 
 export default class UserController {
 
@@ -29,14 +30,33 @@ export default class UserController {
         if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
             try {
                 const users = await this.userHandler.getAll(limit, start)
-                res.json(users)
+                res.json(users) // todo: remove passwords
             } catch (error) {
                 console.error(error)
                 res.status(500).json(messages.InternalServerError)
             }
         } else {
             res.status(403).json({ message: "Admin permission required" })
+        }
+    }
 
+    async getOne(req: Request<{ id: string }>, res: Response<User | Message>): Promise<void> {
+        
+        const userId = req.params.id
+        if (!validate(userId)) {
+            res.status(400).json({ message: "User id must be a valid UUID" })
+            return    
+        }
+
+        if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
+            const user = await this.userHandler.getOne(userId)
+            if (user) {
+                res.json(user) // todo: remove password
+            } else {
+                res.status(404).json({ message: "User not found" })
+            }    
+        } else {
+            res.status(403).json({ message: "Admin permission required" })
         }
     }
 }
