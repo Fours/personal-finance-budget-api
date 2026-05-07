@@ -6,6 +6,7 @@ import UserRepository from "./repositories/UserRepository.ts"
 import type { Message } from "./dto/Message.ts"
 import UserHandler from "./domain/handlers/UserHandler.ts"
 import AuthController from "./controllers/AuthController.ts"
+import { authenticate } from "./middleware/authMiddleware.ts"
 
 const userRepository = new UserRepository(prisma)
 const userHandler = new UserHandler(userRepository)
@@ -18,7 +19,7 @@ app.use(express.json());
 
 app.post("/api/auth/register", authController.register.bind(authController))
 app.post("/api/auth/login", authController.login.bind(authController))
-app.get("/api/auth/validate", authController.validate.bind(authController))
+app.get("/api/auth/validate", authenticate, authController.validate.bind(authController))
 
 app.use((req: Request, res: Response<Message>): void => {
     res.status(404).json({message: "No endpoint found"})

@@ -82,17 +82,7 @@ export default class AuthController {
     }
 
     async validate(req: Request, res: Response): Promise<void> {
-        const authHeader = req.headers.authorization || " "
-        const token = authHeader.split(" ")[1]
-        const decoded = jwt.decode(token)
-        if (decoded) {
-            res.status(200).json(decoded)
-        } else {
-            res.status(401).json({
-                message: "Unauthorized: invalid token"
-            })
-        }
-
+        res.status(200).json(res.locals.user)
     }
 
     private createJwtToken(user: User): string {
