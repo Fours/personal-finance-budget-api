@@ -38,6 +38,10 @@ export default class UserHandler implements IUserHandler {
         }
     }
 
+    async getAll(limit: number, start: number): Promise<User[]> {        
+        return this.userRepo.getAll(limit, start)
+    }
+
 
 
 }
