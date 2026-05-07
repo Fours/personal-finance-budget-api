@@ -6,5 +6,7 @@ export default interface IUserRepository {
 
     getOne: (userId: string) => Promise<User>
 
+    getOneByEmail: (email: string) => Promise<User>
+
     getAll: (limit: number, start: number) => Promise<User[]>
 }

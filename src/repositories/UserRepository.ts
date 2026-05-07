@@ -24,6 +24,14 @@ export default class UserRepository implements IUserRepository {
             }
         })
     }
+
+    getOneByEmail(email: string): Promise<User> {
+        return this.prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+    }
     
     getAll(limit: number = 50, start: number = 0): Promise<User[]> {
         return this.prisma.user.findMany({
