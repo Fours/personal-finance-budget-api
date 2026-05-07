@@ -39,6 +39,8 @@ model Transaction {
     kind        String
     user        User      @relation(fields: [userId], references: [id])
     category    Category  @relation(fields: [categoryId], references: [id])
+
+    @@index([userId])
 }
 
 model Budget {
@@ -49,4 +51,6 @@ model Budget {
     rollover    Boolean
     user        User      @relation(fields: [userId], references: [id])
     category    Category  @relation(fields: [categoryId], references: [id])
+
+    @@index([userId])
 }
