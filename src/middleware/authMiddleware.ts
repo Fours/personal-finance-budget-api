@@ -11,12 +11,7 @@ export function authenticate(req: Request, res: Response, next: NextFunction) {
     try {
         const decoded = jwt.verify(token, JWT_SECRET) as JwtPayload
         if (decoded) {
-            res.locals.user = {
-                id: decoded.id,
-                email: decoded.email,
-                name: decoded.name,
-                roles: decoded.roles
-            }
+            res.locals.user = decoded
             next()
         } else {
             res.status(401).json({

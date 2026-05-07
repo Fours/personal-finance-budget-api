@@ -7,6 +7,7 @@ import NotFound from "../errors/NotFound.ts";
 import Unauthorized from "../errors/Unauthorized.ts";
 import type { Login } from "../../dto/request/Login.ts";
 import ValidationError from "../errors/ValidationError.ts";
+import type { User as UserWithoutPassword } from "../../dto/response/User.ts"
 
 export default class UserHandler implements IUserHandler {
 
@@ -16,13 +17,18 @@ export default class UserHandler implements IUserHandler {
         this.userRepo = userRepo
     }
     
-    async register(dto: Register): Promise<User> {
+    async register(dto: Register): Promise<UserWithoutPassword> {
         const user = User.fromRegister(dto)
         await this.userRepo.create(user)
-        return user
+        return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            roles: user.roles
+        }
     }
 
-    async login(dto: Login): Promise<User> {
+    async login(dto: Login): Promise<UserWithoutPassword> {
         if (!dto.email || !dto.password) {
             throw new ValidationError("Email and password must be non-empty strings")
         }
@@ -32,18 +38,37 @@ export default class UserHandler implements IUserHandler {
         }
         const isMatch = await bcrypt.compare(dto.password, user.password);
         if (isMatch) {
-            return user
+            return {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                roles: user.roles
+            }
         } else {
             throw new Unauthorized("Incorrect password")
         }
     }
 
-    async getAll(limit: number, start: number): Promise<User[]> {        
-        return this.userRepo.getAll(limit, start)
+    async getAll(limit: number, start: number): Promise<UserWithoutPassword[]> {        
+        const users = await this.userRepo.getAll(limit, start)
+        return users.map(user => {
+            return {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                roles: user.roles
+            }
+        })
     }
 
-    async getOne(userId: string): Promise<User> {
-        return this.userRepo.getOne(userId)
+    async getOne(userId: string): Promise<UserWithoutPassword> {
+        const user = await this.userRepo.getOne(userId)
+        return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            roles: user.roles
+        }
     }
 
 }

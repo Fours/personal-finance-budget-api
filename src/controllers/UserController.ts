@@ -29,7 +29,7 @@ export default class UserController {
 
         if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
             try {
-                const users = await this.userHandler.getAll(limit, start)
+                const users = await this.userHandler.getAll(limit, start)                
                 res.json(users) // todo: remove passwords
             } catch (error) {
                 console.error(error)

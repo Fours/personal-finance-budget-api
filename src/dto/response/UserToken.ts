@@ -1,9 +1,6 @@
+import type { User } from "./User.ts"
+
 export type UserToken = {
-    user: {
-        id: string
-        email: string
-        name: string
-        roles: string[]
-    },
+    user: User,
     token: string
 }
