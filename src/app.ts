@@ -18,6 +18,7 @@ app.use(express.json());
 
 app.post("/api/auth/register", authController.register.bind(authController))
 app.post("/api/auth/login", authController.login.bind(authController))
+app.get("/api/auth/validate", authController.validate.bind(authController))
 
 app.use((req: Request, res: Response<Message>): void => {
     res.status(404).json({message: "No endpoint found"})
