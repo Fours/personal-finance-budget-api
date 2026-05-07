@@ -9,13 +9,16 @@ import type { Login } from "../../dto/request/Login.ts";
 import ValidationError from "../errors/ValidationError.ts";
 import type { User as UserWithoutPassword } from "../../dto/response/User.ts"
 import validateEmail from "../../lib/validateEmail.ts"
+import type IEventDispatcher from "../../services/IEventDispatcher.ts";
 
 export default class UserHandler implements IUserHandler {
 
     private readonly userRepo: IUserRepository
+    private readonly eventDispatcher: IEventDispatcher
 
-    constructor(userRepo: IUserRepository) {
+    constructor(userRepo: IUserRepository, eventDispatcher: IEventDispatcher) {
         this.userRepo = userRepo
+        this.eventDispatcher = eventDispatcher
     }
     
     async register(dto: Register): Promise<UserWithoutPassword> {
@@ -35,6 +38,11 @@ export default class UserHandler implements IUserHandler {
             dto.name || ""
         )
         await this.userRepo.create(user)
+        this.eventDispatcher.emit("UserRegistered", {
+            id: user.id,
+            email: user.email,
+            name: user.name
+        })
         return {
             id: user.id,
             email: user.email,

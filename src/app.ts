@@ -8,9 +8,11 @@ import UserHandler from "./domain/handlers/UserHandler.ts"
 import AuthController from "./controllers/AuthController.ts"
 import { authenticate } from "./middleware/authMiddleware.ts"
 import UserController from "./controllers/UserController.ts"
+import EventDispatcher from "./services/EventDispatcher.ts"
 
+const eventDispatcher = new EventDispatcher()
 const userRepository = new UserRepository(prisma)
-const userHandler = new UserHandler(userRepository)
+const userHandler = new UserHandler(userRepository, eventDispatcher)
 const authController = new AuthController(userHandler)
 const userController = new UserController(userHandler)
 
