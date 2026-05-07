@@ -4,6 +4,7 @@ import type User from "../domain/models/User";
 import type IUserRepository from "./IUserRepository";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
+import { DB_DEFAULT_LIMIT } from "../lib/constants.ts";
 
 export default class UserRepository implements IUserRepository {
     
@@ -44,7 +45,7 @@ export default class UserRepository implements IUserRepository {
         })
     }
     
-    getAll(limit: number = 50, start: number = 0): Promise<User[]> {
+    getAll(limit: number = DB_DEFAULT_LIMIT, start: number = 0): Promise<User[]> {
         return this.prisma.user.findMany({
             take: limit,
             skip: start,

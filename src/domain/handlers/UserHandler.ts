@@ -72,7 +72,7 @@ export default class UserHandler implements IUserHandler {
         }
     }
 
-    async getAll(limit: number, start: number): Promise<UserWithoutPassword[]> {        
+    async getAll(limit?: number, start?: number): Promise<UserWithoutPassword[]> {        
         const users = await this.userRepo.getAll(limit, start)
         return users.map(user => {
             return {

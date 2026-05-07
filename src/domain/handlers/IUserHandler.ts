@@ -8,7 +8,7 @@ export default interface IUserHandler {
 
     login(dto: Login): Promise<User>
 
-    getAll(limit: number, start: number): Promise<User[]>
+    getAll(limit?: number, start?: number): Promise<User[]>
 
     getOne(userId: string): Promise<User>
 

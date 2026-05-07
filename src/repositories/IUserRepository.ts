@@ -8,5 +8,5 @@ export default interface IUserRepository {
 
     getOneByEmail: (email: string) => Promise<User>
 
-    getAll: (limit: number, start: number) => Promise<User[]>
+    getAll: (limit?: number, start?: number) => Promise<User[]>
 }

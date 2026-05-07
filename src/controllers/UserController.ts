@@ -14,20 +14,21 @@ export default class UserController {
 
     async getAll(req: Request<{}, unknown, {}, { limit?: number, start?: number }>, res: Response<User[] | Message>): Promise<void> {
         
-        const limit = Number(req.query.limit || 50);
-        const start = Number(req.query.start || 0);
-
-        if (Number.isNaN(limit) || Number.isNaN(start)) {
+        let limit
+        let start
+        if (req.query.limit) {
+            limit = Number(req.query.limit)
+        }
+        if (req.query.start) {
+            start = Number(req.query.start)
+        }
+        // have to check query params are truthy here because NaN evaluates to false
+        if ((req.query.limit && Number.isNaN(limit)) || (req.query.start && Number.isNaN(start))) {
             res.status(400).json({ message: "Optional query params 'limit' and 'start' must be numbers if provided"})
             return
         }
 
-        if (limit === 0) {
-            res.status(400).json({ message: "Query param 'limit' must not be zero"})
-            return
-        }
-
-        if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
+        if (Array.isArray(res.locals.user?.roles) && res.locals.user.roles.includes("admin")) {
             try {
                 const users = await this.userHandler.getAll(limit, start)                
                 res.json(users)
