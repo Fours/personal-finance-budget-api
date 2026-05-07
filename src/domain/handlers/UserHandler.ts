@@ -8,6 +8,7 @@ import Unauthorized from "../errors/Unauthorized.ts";
 import type { Login } from "../../dto/request/Login.ts";
 import ValidationError from "../errors/ValidationError.ts";
 import type { User as UserWithoutPassword } from "../../dto/response/User.ts"
+import validateEmail from "../../lib/validateEmail.ts"
 
 export default class UserHandler implements IUserHandler {
 
@@ -18,7 +19,21 @@ export default class UserHandler implements IUserHandler {
     }
     
     async register(dto: Register): Promise<UserWithoutPassword> {
-        const user = User.fromRegister(dto)
+        const email = dto.email || ""        
+        if (!validateEmail(email)) {
+            throw new ValidationError("Email must be a valid email address")
+        }
+        if (typeof dto.password !== "string" || dto.password === "") {
+            throw new ValidationError("Password must be a non-empy string")
+        }
+        const passwordHash = bcrypt.hashSync(dto.password, 10);
+        const user = new User(
+            crypto.randomUUID(),
+            dto.email!, // we know its a non-empty valid email at this point
+            passwordHash,
+            ["user"], // default starting role
+            dto.name || ""
+        )
         await this.userRepo.create(user)
         return {
             id: user.id,
@@ -70,5 +85,4 @@ export default class UserHandler implements IUserHandler {
             roles: user.roles
         }
     }
-
 }
