@@ -10,6 +10,7 @@ import type { Login } from "../dto/request/Login.ts";
 import NotFound from "../domain/errors/NotFound.ts";
 import type { User } from "../dto/response/User.ts";
 import Unauthorized from "../domain/errors/Unauthorized.ts";
+import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
 
 export default class AuthController {
 
@@ -35,6 +36,10 @@ export default class AuthController {
             if (error instanceof ValidationError) {
                 res.status(400).json({
                     message: `${error.name}: ${error.message}`
+                })
+            } else if (error instanceof UniqueConstraintFailed) {
+                res.status(400).json({
+                    message: `${error.name}: A user with that email already exists`
                 })
             } else {
                 console.error(error)
