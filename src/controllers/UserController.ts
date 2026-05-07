@@ -30,7 +30,7 @@ export default class UserController {
         if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
             try {
                 const users = await this.userHandler.getAll(limit, start)                
-                res.json(users) // todo: remove passwords
+                res.json(users)
             } catch (error) {
                 console.error(error)
                 res.status(500).json(messages.InternalServerError)
@@ -51,7 +51,7 @@ export default class UserController {
         if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
             const user = await this.userHandler.getOne(userId)
             if (user) {
-                res.json(user) // todo: remove password
+                res.json(user)
             } else {
                 res.status(404).json({ message: "User not found" })
             }    
