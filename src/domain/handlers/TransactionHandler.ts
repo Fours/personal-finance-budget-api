@@ -1,6 +1,6 @@
-import { CreateTransaction } from "../../dto/request/CreateTransaction";
+import type { CreateTransaction } from "../../dto/request/CreateTransaction.ts";
 import type ITransactionRepository from "../../repositories/ITransactionRepository";
-import type Transaction from "../models/Transaction";
+import Transaction from "../models/Transaction.ts";
 import type ITransactionHandler from "./ITransactionHandler";
 
 export default class TransactionHandler implements ITransactionHandler {
@@ -12,7 +12,8 @@ export default class TransactionHandler implements ITransactionHandler {
     }
 
     async create(dto: CreateTransaction): Promise<Transaction> {
-        throw new Error("todo")
+        const transaction = Transaction.from(dto)
+        return this.transactionRepo.create(transaction)
     }
     
     getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]> {

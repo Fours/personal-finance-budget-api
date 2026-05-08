@@ -1,6 +1,9 @@
 import type { Request, Response } from "express";
 import type ITransactionHandler from "../domain/handlers/ITransactionHandler";
-import { messages } from "../dto/response/Message.ts";
+import { type Message, messages } from "../dto/response/Message.ts";
+import type { CreateTransaction } from "../dto/request/CreateTransaction.ts";
+import ValidationError from "../domain/errors/ValidationError.ts";
+import Transaction from "../domain/models/Transaction.ts";
 
 export default class TransactionController {
 
@@ -8,6 +11,19 @@ export default class TransactionController {
 
     constructor(transactionHandler: ITransactionHandler) {
         this.transactionHandler = transactionHandler
+    }
+
+    async create(req: Request<CreateTransaction>, res: Response<Transaction | Message>): Promise<void> {
+        try {
+            const transaction = await this.transactionHandler.create(req.body)
+            res.json(transaction)
+        } catch (error) {
+            if (error instanceof ValidationError) {
+                res.status(400).json({ message: `${error.name}: ${error.message}` })
+            } else {
+                res.status(500).json(messages.InternalServerError)
+            }
+        }
     }
 
     async getAll(req: Request<{}, unknown, { limit?: string, start?: string }>, res: Response): Promise<void> {

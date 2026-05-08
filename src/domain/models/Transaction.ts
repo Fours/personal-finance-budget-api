@@ -1,7 +1,7 @@
-import { CreateTransaction } from "../../dto/request/CreateTransaction"
-import ValidationError from "../errors/ValidationError"
-import validateUUID from "../../lib/validateUUID"
-import validateDate from "../../lib/validateDate"
+import type { CreateTransaction } from "../../dto/request/CreateTransaction.ts"
+import ValidationError from "../errors/ValidationError.ts"
+import validateUUID from "../../lib/validateUUID.ts"
+import validateDate from "../../lib/validateDate.ts"
 
 export default class Transaction {
 

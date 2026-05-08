@@ -46,6 +46,7 @@ app.get("/api/users/:id", authenticate, userController.getOne.bind(userControlle
 app.get("/api/categories", authenticate, categoryController.getAll.bind(categoryController))
 
 // transactions
+app.post("/api/transactions", authenticate, transactionController.create.bind(transactionController))
 app.get("/api/transactions", authenticate, transactionController.getAll.bind(transactionController))
 
 app.use((req: Request, res: Response<Message>): void => {
