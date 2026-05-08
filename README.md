@@ -26,3 +26,7 @@ If schemas change, create a new named prisma migration and regenerate client:
 npx prisma migrate dev --name my_migration_name
 npx prisma generate
 ```
+Run test coverage
+```
+npm test -- --coverage
+```

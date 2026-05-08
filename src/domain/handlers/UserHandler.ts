@@ -21,9 +21,8 @@ export default class UserHandler implements IUserHandler {
         this.eventDispatcher = eventDispatcher
     }
     
-    async register(dto: Register): Promise<UserWithoutPassword> {
-        const email = dto.email || ""        
-        if (!validateEmail(email)) {
+    async register(dto: Register): Promise<UserWithoutPassword> {        
+        if (typeof dto.email !== "string" || !validateEmail(dto.email)) {
             throw new ValidationError("Email must be a valid email address")
         }
         if (typeof dto.password !== "string" || dto.password === "") {
@@ -32,7 +31,7 @@ export default class UserHandler implements IUserHandler {
         const passwordHash = bcrypt.hashSync(dto.password, 10);
         const user = new User(
             crypto.randomUUID(),
-            dto.email!, // we know its a non-empty valid email at this point
+            dto.email,
             passwordHash,
             ["user"], // default starting role
             dto.name || ""
