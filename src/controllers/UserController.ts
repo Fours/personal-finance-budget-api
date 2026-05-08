@@ -1,8 +1,8 @@
-import { validate } from "uuid"
 import { messages, type Message } from "../dto/response/Message.ts";
 import type { Request, Response } from "express";
 import type IUserHandler from "../domain/handlers/IUserHandler";
 import type { User } from "../dto/response/User.ts";
+import validateUUID from "../lib/validateUUID.ts";
 
 export default class UserController {
 
@@ -44,7 +44,7 @@ export default class UserController {
     async getOne(req: Request<{ id: string }>, res: Response<User | Message>): Promise<void> {
         
         const userId = req.params.id
-        if (!validate(userId)) {
+        if (!validateUUID(userId)) {
             res.status(400).json({ message: "User id must be a valid UUID" })
             return    
         }
