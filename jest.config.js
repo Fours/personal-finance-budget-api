@@ -8,4 +8,8 @@ export default {
   transform: {
     ...tsJestTransformCfg,
   },
+  collectCoverageFrom: [
+    "src/**/*.{js,jsx,ts,tsx}", // include all files in src
+    "!src/**/*.d.ts"            // exclude typescript definitions
+  ]
 };
