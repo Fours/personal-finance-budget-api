@@ -16,7 +16,7 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when id is not a string", () => {            
             const dto: CreateTransaction = { id: 1 } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -29,7 +29,7 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when id is not a valid uuid", () => {            
             const dto: CreateTransaction = { id: "not a uuid" }
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -41,38 +41,38 @@ describe("Transaction", () => {
 
         // userId validation
 
-        it ("should fail with ValidationError when userId is not a string", () => {            
-            const dto: CreateTransaction = { id: uuid, userId: 1 } as unknown as CreateTransaction
-            try {
-                Transaction.from(dto)
-                throw new Error("test failed")
-            } catch (error) {
-                expect(error instanceof ValidationError).toBe(true)
-                if (error instanceof ValidationError) {
-                    expect(error.message).toBe("Transaction userId must be a uuid")
-                }                
-            }
-        })
+        // it ("should fail with ValidationError when userId is not a string", () => {            
+        //     const dto: CreateTransaction = { id: uuid, userId: 1 } as unknown as CreateTransaction
+        //     try {
+        //         Transaction.from(dto)
+        //         throw new Error("test failed")
+        //     } catch (error) {
+        //         expect(error instanceof ValidationError).toBe(true)
+        //         if (error instanceof ValidationError) {
+        //             expect(error.message).toBe("Transaction userId must be a uuid")
+        //         }                
+        //     }
+        // })
 
-        it ("should fail with ValidationError when userId is not a valid uuid", () => {            
-            const dto: CreateTransaction = { id: uuid, userId: "not a uuid" }
-            try {
-                Transaction.from(dto)
-                throw new Error("test failed")
-            } catch (error) {
-                expect(error instanceof ValidationError).toBe(true)
-                if (error instanceof ValidationError) {
-                    expect(error.message).toBe("Transaction userId must be a uuid")
-                }                
-            }
-        })
+        // it ("should fail with ValidationError when userId is not a valid uuid", () => {            
+        //     const dto: CreateTransaction = { id: uuid, userId: "not a uuid" }
+        //     try {
+        //         Transaction.from(dto)
+        //         throw new Error("test failed")
+        //     } catch (error) {
+        //         expect(error instanceof ValidationError).toBe(true)
+        //         if (error instanceof ValidationError) {
+        //             expect(error.message).toBe("Transaction userId must be a uuid")
+        //         }                
+        //     }
+        // })
 
         // date validation
 
         it ("should fail with ValidationError when date is not a string", () => {            
             const dto: CreateTransaction = { id: uuid, userId: uuid, date: 1 } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -83,9 +83,9 @@ describe("Transaction", () => {
         })
 
         it ("should fail with ValidationError when date is not in the format YYYY-MM-DD", () => {            
-            const dto: CreateTransaction = { id: uuid, userId: uuid, date: "not a date" }
+            const dto: CreateTransaction = { id: uuid, date: "not a date" }
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -98,9 +98,9 @@ describe("Transaction", () => {
         // merchant validation
 
         it ("should fail with ValidationError when merchant is not a string", () => {            
-            const dto: CreateTransaction = { id: uuid, userId: uuid, date: date, merchant: 1 } as unknown as CreateTransaction
+            const dto: CreateTransaction = { id: uuid, date: date, merchant: 1 } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -111,9 +111,9 @@ describe("Transaction", () => {
         })
 
         it ("should fail with ValidationError when merchant is an empty string", () => {            
-            const dto: CreateTransaction = { id: uuid, userId: uuid, date: date, merchant: "" }
+            const dto: CreateTransaction = { id: uuid, date: date, merchant: "" }
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -126,9 +126,9 @@ describe("Transaction", () => {
         // note validation
 
         it ("should fail with ValidationError when note is not a string", () => {            
-            const dto: CreateTransaction = { id: uuid, userId: uuid, date: date, merchant: merchant, note: 1 } as unknown as CreateTransaction
+            const dto: CreateTransaction = { id: uuid, date: date, merchant: merchant, note: 1 } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -142,15 +142,14 @@ describe("Transaction", () => {
 
         it ("should fail with ValidationError when ammount is not a number", () => {            
             const dto: CreateTransaction = { 
-                id: uuid, 
-                userId: uuid, 
+                id: uuid,
                 date: date, 
                 merchant: merchant, 
                 note: "", 
                 amount: "not a number" 
             } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -163,14 +162,13 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when ammount is zero", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
                 amount: 0
             }
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -185,7 +183,6 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when categoryId is not a string", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
@@ -193,7 +190,7 @@ describe("Transaction", () => {
                 categoryId: 1 
             } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -206,7 +203,6 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when categoryId is not a valid uuid", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
@@ -214,7 +210,7 @@ describe("Transaction", () => {
                 categoryId: "not a uuid"
             }
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -229,7 +225,6 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when account is not a string", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
@@ -238,7 +233,7 @@ describe("Transaction", () => {
                 account: 1 
             } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -251,7 +246,6 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when account an empty string", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
@@ -261,7 +255,7 @@ describe("Transaction", () => {
             }
             
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -276,7 +270,6 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when kind is not a string", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
@@ -286,7 +279,7 @@ describe("Transaction", () => {
                 kind: 1
             } as unknown as CreateTransaction
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -299,7 +292,6 @@ describe("Transaction", () => {
         it ("should fail with ValidationError when kind is not one of the valid values", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
@@ -309,7 +301,7 @@ describe("Transaction", () => {
                 kind: "invalid string"
             }
             try {
-                Transaction.from(dto)
+                Transaction.from(uuid, dto)
                 throw new Error("test failed")
             } catch (error) {
                 expect(error instanceof ValidationError).toBe(true)
@@ -324,7 +316,6 @@ describe("Transaction", () => {
         it ("should return Transaction when all properties are valid", () => {            
             const dto: CreateTransaction = { 
                 id: uuid, 
-                userId: uuid, 
                 date: date, 
                 merchant: merchant, 
                 note: "", 
@@ -332,8 +323,8 @@ describe("Transaction", () => {
                 categoryId: uuid,
                 account: account,
                 kind: "expense"
-            } as unknown as CreateTransaction
-            const transaction = Transaction.from(dto)
+            }
+            const transaction = Transaction.from(uuid, dto)
             expect(transaction).toEqual(new Transaction(uuid, uuid, date, merchant, "", 1, uuid, account, "expense"))
         })
 

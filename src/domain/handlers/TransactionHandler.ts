@@ -11,8 +11,8 @@ export default class TransactionHandler implements ITransactionHandler {
         this.transactionRepo = transactionRepo
     }
 
-    async create(dto: CreateTransaction): Promise<Transaction> {
-        const transaction = Transaction.from(dto)
+    async create(userId: string, dto: CreateTransaction): Promise<Transaction> {
+        const transaction = Transaction.from(userId, dto)
         return this.transactionRepo.create(transaction)
     }
     
