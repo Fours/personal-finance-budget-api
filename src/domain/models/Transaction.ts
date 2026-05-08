@@ -1,3 +1,8 @@
+import { CreateTransaction } from "../../dto/request/CreateTransaction"
+import ValidationError from "../errors/ValidationError"
+import validateUUID from "../../lib/validateUUID"
+import validateDate from "../../lib/validateDate"
+
 export default class Transaction {
 
     readonly id: string
@@ -30,5 +35,26 @@ export default class Transaction {
         this.categoryId = categoryId
         this.account = account
         this.kind = kind
+    }
+
+    static from(dto: CreateTransaction): Transaction {        
+        const id = typeof dto.id === "string" ? dto.id : ""
+        if (!validateUUID(id)) {
+            throw new ValidationError("Transaction id must be a uuid")
+        }
+        const userId = typeof dto.userId === "string" ? dto.userId : ""
+        if (!validateUUID(userId)) {
+            throw new ValidationError("Transaction userId must be a uuid")
+        }
+        const date = typeof dto.date === "string" ? dto.date : ""
+        if(!validateDate(date)) {
+            throw new ValidationError("Transaction date must be a valid date with the format YYYY-MM-DD")
+        }
+        const account = typeof dto.account === "string" ? dto.account : ""
+        if (account === ""){
+            throw new ValidationError("Transaction account must be a non-empty string")
+        }
+        // todo
+        return new Transaction(id, "", "", "", "", 0, "", "", "")
     }
 }
