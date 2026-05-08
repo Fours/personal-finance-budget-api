@@ -50,11 +50,30 @@ export default class Transaction {
         if(!validateDate(date)) {
             throw new ValidationError("Transaction date must be a valid date with the format YYYY-MM-DD")
         }
+        const merchant = typeof dto.merchant === "string" ? dto.merchant : ""
+        if (merchant === ""){
+            throw new ValidationError("Transaction merchant must be a non-empty string")
+        }
+        if (typeof dto.note !== "string"){
+            throw new ValidationError("Transaction note must be a string - it can be empty")
+        }
+        const amount = typeof dto.amount === "number" ? dto.amount : 0
+        if (amount === 0) {
+            throw new ValidationError("Transaction ammount must be a non-zero number")
+        }
+        const categoryId = typeof dto.categoryId === "string" ? dto.categoryId : ""
+        if (!validateUUID(categoryId)) {
+            throw new ValidationError("Transaction categoryId must be a uuid")
+        }
         const account = typeof dto.account === "string" ? dto.account : ""
         if (account === ""){
             throw new ValidationError("Transaction account must be a non-empty string")
         }
-        // todo
-        return new Transaction(id, "", "", "", "", 0, "", "", "")
+        const kind = typeof dto.kind === "string" ? dto.kind : ""
+        if(kind !== "expense" && kind !== "income" && kind !== "transfer") {
+            throw new ValidationError("Transaction kind must be one of [expense, income, transfer]")
+        }
+        
+        return new Transaction(id, userId, date, merchant, dto.note, amount, categoryId, account, kind)
     }
 }
