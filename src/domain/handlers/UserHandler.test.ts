@@ -116,10 +116,10 @@ describe("UserHandler", () => {
         it("should save a new user with correct properties", async () => {
             const register = { email: "email@email.com", password: "password", name: "name" }
             const uuid = "5d6863bd-beec-4e07-bf4f-a39098d1da97"
-            const spyCreate = jest.spyOn(userRepo, "create").mockImplementation((_) => Promise.resolve(new User("", "", "", [], "")))
-            const spyEmit = jest.spyOn(eventDispatcher, "emit").mockImplementation((_1, _2) => { return })
-            const spyHash = jest.spyOn(bcrypt, "hashSync").mockImplementation((_1, _2) => "password-hash")
-            const spyUuid = jest.spyOn(crypto, "randomUUID").mockImplementation(() => uuid)
+            const spyCreate = jest.spyOn(userRepo, "create").mockResolvedValue(new User("", "", "", [], "")) // return value is unused
+            const spyEmit = jest.spyOn(eventDispatcher, "emit").mockReturnValue()
+            const spyHash = jest.spyOn(bcrypt, "hashSync").mockReturnValue("password-hash")
+            const spyUuid = jest.spyOn(crypto, "randomUUID").mockReturnValue(uuid)
             const user = await userHandler.register(register)
             expect(user).toEqual({
                 id: uuid,
