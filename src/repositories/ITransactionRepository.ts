@@ -3,6 +3,8 @@ import type Transaction from "../domain/models/Transaction";
 export default interface ITransactionRepository {
 
     create(transaction: Transaction): Promise<Transaction>
+
+    update(id: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string): Promise<Transaction>
     
     getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]>
 

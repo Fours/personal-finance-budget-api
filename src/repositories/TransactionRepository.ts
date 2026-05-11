@@ -29,6 +29,28 @@ export default class TransactionRepository implements ITransactionRepository {
             }
         }
     }
+
+    async update(id: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string): Promise<Transaction> {        
+        const updateObj: Record<string, any> = {}
+        if (date !== undefined) updateObj["date"] = date;
+        if (merchant !== undefined) updateObj["merchant"] = merchant;
+        if (note !== undefined) updateObj["note"] = note;
+        if (amount !== undefined) updateObj["amount"] = amount;
+        if (categoryId !== undefined) updateObj["categoryId"] = categoryId;
+        try {
+            const transaction = await this.prisma.transaction.update({
+                where: { id: id },
+                data: updateObj,
+            });
+            return transaction;
+        } catch (error) {            
+            if (error instanceof PrismaClientKnownRequestError && error.code === "P2003") {
+                throw new ForeignConstraintFailed("Must provide a valid existing categoryId")
+            } else {
+                throw error
+            }
+        }        
+    }
     
     getAll(userId: string, limit: number = 50, start: number = 0): Promise<Transaction[]> {
         return this.prisma.transaction.findMany({

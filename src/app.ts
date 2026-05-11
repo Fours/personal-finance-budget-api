@@ -48,9 +48,13 @@ app.get("/api/categories", authenticate, categoryController.getAll.bind(category
 // transactions
 app.post("/api/transactions", authenticate, transactionController.create.bind(transactionController))
 app.get("/api/transactions", authenticate, transactionController.getAll.bind(transactionController))
+app.patch("/api/transactions/:id", authenticate, transactionController.update.bind(transactionController))
 
 app.use((req: Request, res: Response<Message>): void => {
     res.status(404).json({ message: "No endpoint found" })
 })
+
+// helpers - todo: remove
+// Array(5).fill(1).forEach(_ => console.log(crypto.randomUUID()))
 
 export default app

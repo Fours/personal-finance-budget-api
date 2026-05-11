@@ -6,6 +6,8 @@ import ValidationError from "../domain/errors/ValidationError.ts";
 import Transaction from "../domain/models/Transaction.ts";
 import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
 import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed.ts";
+import type { UpdateTransaction } from "../dto/request/UpdateTransaction.ts";
+import validateUUID from "../lib/validateUUID.ts";
 
 export default class TransactionController {
 
@@ -24,6 +26,27 @@ export default class TransactionController {
                 res.status(400).json({ message: `${error.name}: ${error.message}` })
             } else if (error instanceof UniqueConstraintFailed) {
                 res.status(400).json({ message: `${error.name}: Transaction id must be unique` })
+            } else if (error instanceof ForeignConstraintFailed) {
+                res.status(400).json({ message: `${error.name}: ${error.message}` })
+            } else {
+                console.error(error)
+                res.status(500).json(messages.InternalServerError)
+            }
+        }
+    }
+
+    async update(req: Request<{ id: string }, unknown, UpdateTransaction>, res: Response<Transaction | Message>): Promise<void> {
+        const transactionId = req.params.id
+        if (!validateUUID(transactionId)) {
+            res.status(400).json({ message: "Transaction id must be a valid UUID" })
+            return
+        }        
+        try {
+            const updated = await this.transactionHandler.update(transactionId, req.body)
+            res.json(updated)
+        } catch(error) {
+            if (error instanceof ValidationError) {
+                res.status(400).json({ message: `${error.name}: ${error.message}` })
             } else if (error instanceof ForeignConstraintFailed) {
                 res.status(400).json({ message: `${error.name}: ${error.message}` })
             } else {
