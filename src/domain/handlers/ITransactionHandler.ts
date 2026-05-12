@@ -9,4 +9,6 @@ export default interface ITransactionHandler {
     update(id: string, dto: UpdateTransaction): Promise<Transaction>
     
     getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]>
+
+    delete(id: string, userId: string): Promise<void>
 }

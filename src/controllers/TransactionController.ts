@@ -8,6 +8,7 @@ import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
 import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed.ts";
 import type { UpdateTransaction } from "../dto/request/UpdateTransaction.ts";
 import validateUUID from "../lib/validateUUID.ts";
+import NotFound from "../domain/errors/NotFound.ts";
 
 export default class TransactionController {
 
@@ -77,6 +78,25 @@ export default class TransactionController {
         } catch(error) {
             console.error(error)
             res.status(500).json(messages.InternalServerError)
+        }
+    }
+
+    async delete(req: Request<{ id: string }>, res: Response<Message>): Promise<void> {
+        const transactionId = req.params.id
+        if (!validateUUID(transactionId)) {
+            res.status(400).json({ message: "Transaction id must be a valid UUID" })
+            return
+        }        
+        try {
+            const deleted = await this.transactionHandler.delete(transactionId, res.locals.user?.id)
+            res.json({ message: "Transaction deleted."})
+        } catch(error) {
+            if (error instanceof NotFound) {
+                res.status(404).json({ message: error.message })   
+            } else {
+                console.error(error)
+                res.status(500).json(messages.InternalServerError)
+            }
         }
     }
 

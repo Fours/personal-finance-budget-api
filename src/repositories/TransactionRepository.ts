@@ -4,6 +4,7 @@ import type ITransactionRepository from "./ITransactionRepository";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
 import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed.ts";
+import NotFound from "../domain/errors/NotFound.ts";
 
 export default class TransactionRepository implements ITransactionRepository {
 
@@ -59,5 +60,19 @@ export default class TransactionRepository implements ITransactionRepository {
             skip: start,
             orderBy: { date: 'desc' }
         })
+    }
+
+    async delete(id: string, userId: string): Promise<void> {
+        try {
+            await this.prisma.transaction.delete({
+                where: { id: id, userId: userId }
+            })
+        } catch (error) {
+            if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+                throw new NotFound("Transaction was not found")
+            } else {
+                throw error
+            }
+        }
     }
 }

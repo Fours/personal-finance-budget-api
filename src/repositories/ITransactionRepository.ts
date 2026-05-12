@@ -8,4 +8,6 @@ export default interface ITransactionRepository {
     
     getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]>
 
+    delete(id: string, userId: string): Promise<void>
+
 }

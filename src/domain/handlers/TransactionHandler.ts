@@ -29,6 +29,10 @@ export default class TransactionHandler implements ITransactionHandler {
         return this.transactionRepo.getAll(userId, limit, start)
     }
 
+    delete(id: string, userId: string): Promise<void> {
+        return this.transactionRepo.delete(id, userId)
+    }
+
     private validateUpdate(dto: UpdateTransaction): void {
         if (dto.date !== undefined && (typeof dto.date !== "string" || !validateDate(dto.date))) {
             throw new ValidationError("Transaction date, if provided, must be a string in the format 'YYYY-MM-DD'")

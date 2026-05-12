@@ -49,6 +49,7 @@ app.get("/api/categories", authenticate, categoryController.getAll.bind(category
 app.post("/api/transactions", authenticate, transactionController.create.bind(transactionController))
 app.get("/api/transactions", authenticate, transactionController.getAll.bind(transactionController))
 app.patch("/api/transactions/:id", authenticate, transactionController.update.bind(transactionController))
+app.delete("/api/transactions/:id", authenticate, transactionController.delete.bind(transactionController))
 
 app.use((req: Request, res: Response<Message>): void => {
     res.status(404).json({ message: "No endpoint found" })
