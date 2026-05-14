@@ -1,14 +1,11 @@
 import type { Request, Response } from "express";
 import type ITransactionHandler from "../domain/handlers/ITransactionHandler";
-import { type Message, messages } from "../dto/response/Message.ts";
+import { type Message } from "../dto/response/Message.ts";
 import type { CreateTransaction } from "../dto/request/CreateTransaction.ts";
-import ValidationError from "../domain/errors/ValidationError.ts";
 import Transaction from "../domain/models/Transaction.ts";
-import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
-import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed.ts";
 import type { UpdateTransaction } from "../dto/request/UpdateTransaction.ts";
 import validateUUID from "../lib/validateUUID.ts";
-import NotFound from "../domain/errors/NotFound.ts";
+import errorResponses from "../lib/errorResponses.ts";
 
 export default class TransactionController {
 
@@ -23,16 +20,7 @@ export default class TransactionController {
             const transaction = await this.transactionHandler.create(res.locals.user?.id, req.body)
             res.json(transaction)
         } catch (error) {
-            if (error instanceof ValidationError) {
-                res.status(400).json({ message: `${error.name}: ${error.message}` })
-            } else if (error instanceof UniqueConstraintFailed) {
-                res.status(400).json({ message: `${error.name}: Transaction id must be unique` })
-            } else if (error instanceof ForeignConstraintFailed) {
-                res.status(400).json({ message: `${error.name}: ${error.message}` })
-            } else {
-                console.error(error)
-                res.status(500).json(messages.InternalServerError)
-            }
+            errorResponses(res, error)
         }
     }
 
@@ -45,19 +33,12 @@ export default class TransactionController {
         try {
             const updated = await this.transactionHandler.update(transactionId, req.body)
             res.json(updated)
-        } catch(error) {
-            if (error instanceof ValidationError) {
-                res.status(400).json({ message: `${error.name}: ${error.message}` })
-            } else if (error instanceof ForeignConstraintFailed) {
-                res.status(400).json({ message: `${error.name}: ${error.message}` })
-            } else {
-                console.error(error)
-                res.status(500).json(messages.InternalServerError)
-            }
+        } catch(error) {            
+            errorResponses(res, error)
         }
     }
 
-    async getAll(req: Request<{}, unknown, { limit?: string, start?: string }>, res: Response): Promise<void> {
+    async getAll(req: Request<{}, unknown, { limit?: string, start?: string }>, res: Response<Transaction[] | Message>): Promise<void> {
 
         let limit
         let start
@@ -76,8 +57,7 @@ export default class TransactionController {
             const transactions = await this.transactionHandler.getAll(res.locals.user?.id, limit, start)
             res.json(transactions)
         } catch(error) {
-            console.error(error)
-            res.status(500).json(messages.InternalServerError)
+            errorResponses(res, error)
         }
     }
 
@@ -91,12 +71,7 @@ export default class TransactionController {
             const deleted = await this.transactionHandler.delete(transactionId, res.locals.user?.id)
             res.json({ message: "Transaction deleted."})
         } catch(error) {
-            if (error instanceof NotFound) {
-                res.status(404).json({ message: error.message })   
-            } else {
-                console.error(error)
-                res.status(500).json(messages.InternalServerError)
-            }
+            errorResponses(res, error)
         }
     }
 

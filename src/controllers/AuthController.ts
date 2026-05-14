@@ -1,16 +1,12 @@
 import jwt from "jsonwebtoken"
 import type { Request, Response } from "express";
-import { messages } from "../dto/response/Message.ts";
 import type { Message } from "../dto/response/Message.ts";
 import type UserHandler from "../domain/handlers/UserHandler.ts";
 import type { Register } from "../dto/request/Register.ts";
-import ValidationError from "../domain/errors/ValidationError.ts";
 import type { UserToken } from "../dto/response/UserToken.ts";
 import type { Login } from "../dto/request/Login.ts";
-import NotFound from "../domain/errors/NotFound.ts";
 import type { User } from "../dto/response/User.ts";
-import Unauthorized from "../domain/errors/Unauthorized.ts";
-import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
+import errorResponses from "../lib/errorResponses.ts";
 
 export default class AuthController {
 
@@ -33,18 +29,7 @@ export default class AuthController {
                 token
             })
         } catch (error) {
-            if (error instanceof ValidationError) {
-                res.status(400).json({
-                    message: `${error.name}: ${error.message}`
-                })
-            } else if (error instanceof UniqueConstraintFailed) {
-                res.status(400).json({
-                    message: `${error.name}: A user with that email already exists`
-                })
-            } else {
-                console.error(error)
-                res.status(500).json(messages.InternalServerError)
-            }
+            errorResponses(res, error)
         }        
     }
 
@@ -57,22 +42,7 @@ export default class AuthController {
                 token
             })
         } catch (error) {
-            if (error instanceof ValidationError) {
-                res.status(400).json({
-                    message: `${error.name}: ${error.message}`
-                })
-            } else if (error instanceof NotFound) {
-                res.status(404).json({
-                    message: `${error.message}`
-                })
-            } else if (error instanceof Unauthorized) {
-                res.status(401).json({
-                    message: `${error.name}: ${error.message}`
-                })
-            } else {
-                console.error(error)
-                res.status(500).json(messages.InternalServerError)
-            }
+            errorResponses(res, error)
         }
     }
 

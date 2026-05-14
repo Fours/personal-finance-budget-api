@@ -1,8 +1,9 @@
-import { messages, type Message } from "../dto/response/Message.ts";
+import type { Message } from "../dto/response/Message.ts";
 import type { Request, Response } from "express";
 import type IUserHandler from "../domain/handlers/IUserHandler";
 import type { User } from "../dto/response/User.ts";
 import validateUUID from "../lib/validateUUID.ts";
+import errorResponses from "../lib/errorResponses.ts";
 
 export default class UserController {
 
@@ -33,8 +34,7 @@ export default class UserController {
                 const users = await this.userHandler.getAll(limit, start)                
                 res.json(users)
             } catch (error) {
-                console.error(error)
-                res.status(500).json(messages.InternalServerError)
+                errorResponses(res, error)
             }
         } else {
             res.status(403).json({ message: "Admin permission required" })
@@ -50,12 +50,16 @@ export default class UserController {
         }
 
         if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
-            const user = await this.userHandler.getOne(userId)
-            if (user) {
-                res.json(user)
-            } else {
-                res.status(404).json({ message: "User not found" })
-            }    
+            try {
+                const user = await this.userHandler.getOne(userId)
+                if (user) {
+                    res.json(user)
+                } else {
+                    res.status(404).json({ message: "User not found" })
+                }
+            } catch(error) {
+                errorResponses(res, error)
+            }
         } else {
             res.status(403).json({ message: "Admin permission required" })
         }

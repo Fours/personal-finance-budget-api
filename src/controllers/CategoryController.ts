@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
 import type ICategoryHandler from "../domain/handlers/ICategoryHandler"
 import type Category from "../domain/models/Category"
-import { messages, type Message } from "../dto/response/Message.ts"
+import { type Message } from "../dto/response/Message.ts"
+import errorResponses from "../lib/errorResponses.ts";
 
 export default class CategoryController {
 
@@ -16,8 +17,7 @@ export default class CategoryController {
             const categories = await this.categoryHandler.getAll()
             res.json(categories)
         } catch(error) {
-            console.error(error)
-            res.status(500).json(messages.InternalServerError)
+            errorResponses(res, error)
         }
     }
 }
