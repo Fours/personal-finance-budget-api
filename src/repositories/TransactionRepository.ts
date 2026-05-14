@@ -5,6 +5,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
 import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed.ts";
 import NotFound from "../domain/errors/NotFound.ts";
+import { DB_DEFAULT_LIMIT } from "../lib/constants.ts";
 
 export default class TransactionRepository implements ITransactionRepository {
 
@@ -53,7 +54,7 @@ export default class TransactionRepository implements ITransactionRepository {
         }        
     }
     
-    getAll(userId: string, limit: number = 50, start: number = 0): Promise<Transaction[]> {
+    getAll(userId: string, limit: number = DB_DEFAULT_LIMIT, start: number = 0): Promise<Transaction[]> {
         return this.prisma.transaction.findMany({
             where: { userId: userId },
             take: limit,
