@@ -70,7 +70,7 @@ describe("Transaction", () => {
         // date validation
 
         it ("should fail with ValidationError when date is not a string", () => {            
-            const dto: CreateTransaction = { id: uuid, userId: uuid, date: 1 } as unknown as CreateTransaction
+            const dto: CreateTransaction = { id: uuid, date: 1 } as unknown as CreateTransaction
             try {
                 Transaction.from(uuid, dto)
                 throw new Error("test failed")
