@@ -8,7 +8,7 @@ export default interface IBudgetRepository {
 
     getByCategoryId(userId: string, categoryId: string): Promise<Budget | null>
     
-    getAll(userId: string): Promise<Budget[]>
+    getAll(userId: string, limit?: number, start?: number): Promise<Budget[]>
 
     delete(id: string, userId: string): Promise<void>
 }

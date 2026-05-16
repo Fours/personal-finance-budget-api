@@ -22,4 +22,8 @@ export default class BudgetHandler implements IBudgetHandler {
             throw new ValidationError("There already exists a budget for that cateogry")
         }
     }
+
+    async getAll(userId: string, limit?: number, start?: number): Promise<Budget[]> {
+        return this.budgetRepo.getAll(userId, limit, start)
+    }
 }

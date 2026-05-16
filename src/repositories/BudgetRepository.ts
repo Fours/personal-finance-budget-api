@@ -5,6 +5,7 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
 import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed.ts";
 import NotFound from "../domain/errors/NotFound.ts";
+import { DB_DEFAULT_LIMIT } from "../lib/constants.ts";
 
 export default class BudgetRepository implements IBudgetRepository {
 
@@ -54,7 +55,7 @@ export default class BudgetRepository implements IBudgetRepository {
     }
 
     async getByCategoryId(userId: string, categoryId: string): Promise<Budget | null> {
-        const budgets = await this.prisma.budget.getAll({
+        const budgets = await this.prisma.budget.findMany({
             where: { userId: userId, categoryId: categoryId }
         })
         if (budgets.length > 0) {
@@ -64,9 +65,12 @@ export default class BudgetRepository implements IBudgetRepository {
         }
     }
 
-    async getAll(userId: string): Promise<Budget[]> {
-        const budgets = this.prisma.budget.getAll({
-            where: { userId: userId }
+    async getAll(userId: string, limit: number = DB_DEFAULT_LIMIT, start: number = 0): Promise<Budget[]> {
+        const budgets = this.prisma.budget.findMany({
+            where: { userId: userId },
+            take: limit,
+            skip: start,
+            orderBy: { id: 'asc' }
         })
         return budgets
     }
