@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client/extension";
-import Budget from "../domain/models/Budget";
-import IBudgetRepository from "./IBudgetRepository";
+import Budget from "../domain/models/Budget.ts";
+import type IBudgetRepository from "./IBudgetRepository.ts";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
-import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed";
-import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed";
-import NotFound from "../domain/errors/NotFound";
+import UniqueConstraintFailed from "../domain/errors/UniqueConstraintFailed.ts";
+import ForeignConstraintFailed from "../domain/errors/ForeignConstraintFailed.ts";
+import NotFound from "../domain/errors/NotFound.ts";
 
 export default class BudgetRepository implements IBudgetRepository {
 

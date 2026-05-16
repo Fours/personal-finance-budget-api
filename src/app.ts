@@ -15,18 +15,24 @@ import CategoryController from "./controllers/CategoryController.ts"
 import TransactionRepository from "./repositories/TransactionRepository.ts"
 import TransactionHandler from "./domain/handlers/TransactionHandler.ts"
 import TransactionController from "./controllers/TransactionController.ts"
+import BudgetRepository from "./repositories/BudgetRepository.ts"
+import BudgetHandler from "./domain/handlers/BudgetHandler.ts"
+import BudgetController from "./controllers/BudgetController.ts"
 
 const eventDispatcher = new EventDispatcher()
 const userRepository = new UserRepository(prisma)
 const categoryRepository = new CategoryRepository(prisma)
 const transactionRepository = new TransactionRepository(prisma)
+const budgetRepository = new BudgetRepository(prisma)
 const userHandler = new UserHandler(userRepository, eventDispatcher)
 const categoryHandler = new CategoryHandler(categoryRepository)
 const transactionHandler = new TransactionHandler(transactionRepository)
+const budgetHandler = new BudgetHandler(budgetRepository)
 const authController = new AuthController(userHandler)
 const userController = new UserController(userHandler)
 const categoryController = new CategoryController(categoryHandler)
 const transactionController = new TransactionController(transactionHandler)
+const budgetController = new BudgetController(budgetHandler)
 
 const app: Express = express()
 
@@ -50,6 +56,9 @@ app.post("/api/transactions", authenticate, transactionController.create.bind(tr
 app.get("/api/transactions", authenticate, transactionController.getAll.bind(transactionController))
 app.patch("/api/transactions/:id", authenticate, transactionController.update.bind(transactionController))
 app.delete("/api/transactions/:id", authenticate, transactionController.delete.bind(transactionController))
+
+// budgets
+app.post("/api/budgets", authenticate, budgetController.create.bind(budgetController))
 
 app.use((req: Request, res: Response<Message>): void => {
     res.status(404).json({ message: "No endpoint found" })

@@ -1,4 +1,4 @@
-import Budget from "../domain/models/Budget";
+import Budget from "../domain/models/Budget.ts";
 
 export default interface IBudgetRepository {
 
