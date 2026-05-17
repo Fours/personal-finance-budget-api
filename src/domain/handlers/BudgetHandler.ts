@@ -16,12 +16,12 @@ export default class BudgetHandler implements IBudgetHandler {
 
     async create(userId: string, dto: CreateBudget): Promise<Budget> {
         const budget = Budget.from(userId, dto)
-        const existingBudget = this.budgetRepo.getByCategoryId(userId, budget.categoryId)
+        const existingBudget = await this.budgetRepo.getByCategoryId(userId, budget.categoryId)
         if (existingBudget === null) {
             await this.budgetRepo.create(budget)
             return budget
         } else {
-            throw new ValidationError("There already exists a budget for that cateogry")
+            throw new ValidationError("There already exists a budget for that cateogry.")
         }
     }
 
@@ -31,7 +31,17 @@ export default class BudgetHandler implements IBudgetHandler {
 
     async update(id: string, userId: string, dto: UpdateBudget): Promise<Budget> {
         this.validateUpdate(dto)
-        return this.budgetRepo.update(id, userId, dto.categoryId, dto.limit, dto.rollover)
+        // exclude the user from creating 2 budgets for same ctg
+        if (dto.categoryId) {
+            const existingBudget = await this.budgetRepo.getByCategoryId(userId, dto.categoryId)
+            if (existingBudget === null || existingBudget.id === id) {
+                return this.budgetRepo.update(id, userId, dto.categoryId, dto.limit, dto.rollover)
+            } else {
+                throw new ValidationError("Can not have two budgets for the same category.")
+            }
+        } else {
+            return this.budgetRepo.update(id, userId, dto.categoryId, dto.limit, dto.rollover)
+        }
     }
 
     private validateUpdate(dto: UpdateBudget): void {
