@@ -34,6 +34,7 @@ export default class BudgetHandler implements IBudgetHandler {
         // exclude the user from creating 2 budgets for same ctg
         if (dto.categoryId) {
             const existingBudget = await this.budgetRepo.getByCategoryId(userId, dto.categoryId)
+            console.log("existingBudget", existingBudget)
             if (existingBudget === null || existingBudget.id === id) {
                 return this.budgetRepo.update(id, userId, dto.categoryId, dto.limit, dto.rollover)
             } else {

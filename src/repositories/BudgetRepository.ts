@@ -58,7 +58,7 @@ export default class BudgetRepository implements IBudgetRepository {
         const budgets = await this.prisma.budget.findMany({
             where: { userId: userId, categoryId: categoryId }
         })
-        if (budgets.length > 0) {
+        if (budgets.length < 1) {
             return null
         } else {
             return budgets[0]
