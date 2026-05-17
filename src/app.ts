@@ -60,6 +60,7 @@ app.delete("/api/transactions/:id", authenticate, transactionController.delete.b
 // budgets
 app.post("/api/budgets", authenticate, budgetController.create.bind(budgetController))
 app.get("/api/budgets", authenticate, budgetController.getAll.bind(budgetController))
+app.patch("/api/budgets/:id", authenticate, budgetController.update.bind(budgetController))
 
 app.use((req: Request, res: Response<Message>): void => {
     res.status(404).json({ message: "No endpoint found" })

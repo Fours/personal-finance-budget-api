@@ -4,6 +4,7 @@ import type { CreateBudget } from "../dto/request/CreateBudget.ts";
 import errorResponses from "../lib/errorResponses.ts";
 import type Budget from "../domain/models/Budget.ts";
 import type { Message } from "../dto/response/Message.ts";
+import type { UpdateBudget } from "../dto/request/UpdateBudget.ts";
 
 export default class BudgetController {
 
@@ -24,24 +25,33 @@ export default class BudgetController {
 
     async getAll(req: Request<{}, unknown, { limit?: string, start?: string }>, res: Response<Budget[] | Message>): Promise<void> {
     
-            let limit
-            let start
-            if (req.query.limit) {
-                limit = Number(req.query.limit)
-            }
-            if (req.query.start) {
-                start = Number(req.query.start)
-            }
-            // have to check query params are truthy here because NaN evaluates to false
-            if ((req.query.limit && Number.isNaN(limit)) || (req.query.start && Number.isNaN(start))) {
-                res.status(400).json({ message: "Optional query params 'limit' and 'start' must be numbers if provided" })
-                return
-            }
-            try {
-                const transactions = await this.budgetHandler.getAll(res.locals.user?.id, limit, start)
-                res.json(transactions)
-            } catch(error) {
-                errorResponses(res, error)
-            }
+        let limit
+        let start
+        if (req.query.limit) {
+            limit = Number(req.query.limit)
         }
+        if (req.query.start) {
+            start = Number(req.query.start)
+        }
+        // have to check query params are truthy here because NaN evaluates to false
+        if ((req.query.limit && Number.isNaN(limit)) || (req.query.start && Number.isNaN(start))) {
+            res.status(400).json({ message: "Optional query params 'limit' and 'start' must be numbers if provided" })
+            return
+        }
+        try {
+            const transactions = await this.budgetHandler.getAll(res.locals.user?.id, limit, start)
+            res.json(transactions)
+        } catch(error) {
+            errorResponses(res, error)
+        }
+    }
+
+    async update(req: Request<{id: string}, unknown, UpdateBudget>, res: Response<Budget | Message>): Promise<void> {
+        try {
+            const budget = await this.budgetHandler.update(req.params.id, res.locals.user?.id, req.body)
+            res.json(budget)
+        } catch(error) {
+            errorResponses(res, error)
+        }
+    }
 }

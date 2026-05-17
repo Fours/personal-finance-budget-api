@@ -1,4 +1,6 @@
 import type { CreateBudget } from "../../dto/request/CreateBudget.ts";
+import type { UpdateBudget } from "../../dto/request/UpdateBudget.ts";
+import validateUUID from "../../lib/validateUUID.ts";
 import type IBudgetRepository from "../../repositories/IBudgetRepository.ts";
 import ValidationError from "../errors/ValidationError.ts";
 import Budget from "../models/Budget.ts";
@@ -25,5 +27,25 @@ export default class BudgetHandler implements IBudgetHandler {
 
     async getAll(userId: string, limit?: number, start?: number): Promise<Budget[]> {
         return this.budgetRepo.getAll(userId, limit, start)
+    }
+
+    async update(id: string, userId: string, dto: UpdateBudget): Promise<Budget> {
+        this.validateUpdate(dto)
+        return this.budgetRepo.update(id, userId, dto.categoryId, dto.limit, dto.rollover)
+    }
+
+    private validateUpdate(dto: UpdateBudget): void {
+        if (!dto) {
+            throw new ValidationError("Update budget body is required.")
+        }
+        if (dto.categoryId !== undefined && (typeof dto.categoryId !== "string" || !validateUUID(dto.categoryId))) {
+            throw new ValidationError("Budget cateegoryId, if provided, must be a valid UUID.")
+        }
+        if (dto.limit !== undefined && (typeof dto.limit !== "number" || dto.limit < 1)) {
+            throw new ValidationError("Budget limit, if provided, must be a positive number.")
+        }
+        if (dto.rollover !== undefined && typeof dto.rollover !== "boolean") {
+            throw new ValidationError("Budget rollover, if provided, must be a boolean.")
+        }
     }
 }
