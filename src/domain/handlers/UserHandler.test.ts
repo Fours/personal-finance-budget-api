@@ -3,8 +3,11 @@ import { Register } from "../../dto/request/Register"
 import type IUserRepository from "../../repositories/IUserRepository"
 import type IEventDispatcher from "../../services/IEventDispatcher"
 import ValidationError from "../errors/ValidationError"
+import NotFound from "../errors/NotFound"
 import User from "../models/User"
 import UserHandler from "./UserHandler"
+import type { Login } from "../../dto/request/Login"
+import Unauthorized from "../errors/Unauthorized"
 
 describe("UserHandler", () => {
 
@@ -12,10 +15,10 @@ describe("UserHandler", () => {
         create(user: User): Promise<User> {
             throw new Error("not implimented")
         }
-        getOne(userId: string): Promise<User> {
+        getOne(userId: string): Promise<User | null> {
             throw new Error("not implimented")
         }
-        getOneByEmail(email: string): Promise<User> {
+        getOneByEmail(email: string): Promise<User | null> {
             throw new Error("not implimented")
         }
         getAll(limit?: number, start?: number): Promise<User[]> {
@@ -147,5 +150,99 @@ describe("UserHandler", () => {
             expect(spyHash.mock.calls.length).toBe(1)
             expect(spyHash.mock.calls[0]).toEqual([ register.password, 10 ])
         })
+    })
+
+    describe("login", () => {
+
+        it("when email is not a string should fail with a ValidationError", async () => {
+            const dto = { email: 1, password: "password"} as unknown as Login
+            try {
+                await userHandler.login(dto)
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Email and password must be non-empty strings")
+                }
+            }
+        })
+
+        it("when email is an empty string should fail with a ValidationError", async () => {
+            const dto = { email: "", password: "password"} as unknown as Login
+            try {
+                await userHandler.login(dto)
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Email and password must be non-empty strings")
+                }
+            }
+        })
+
+        it("when password is not a string should fail with a ValidationError", async () => {
+            const dto = { email: "email", password: 1} as unknown as Login
+            try {
+                await userHandler.login(dto)
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Email and password must be non-empty strings")
+                }
+            }
+        })
+
+        it("when password is an empty string should fail with a ValidationError", async () => {
+            const dto = { email: "email", password: ""} as unknown as Login
+            try {
+                await userHandler.login(dto)
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Email and password must be non-empty strings")
+                }
+            }
+        })
+        
+        it("when user is not found should fail with a NotFound error", async () => {
+            const dto = { email: "email", password: "password" } 
+            const spyGet = jest.spyOn(userRepo, "getOneByEmail").mockResolvedValue(null)
+            try {
+                await userHandler.login(dto)
+            } catch(error) {
+                expect(error instanceof NotFound).toBe(true)
+                if (error instanceof NotFound) {
+                    expect(error.message).toBe("Could not find user with that email")
+                }
+            }
+        })
+
+        it("when passowrd is not a match should fail with Unauthorized error", async () => {
+            const dto = { email: "email", password: "password" } 
+            const spyGet = jest.spyOn(userRepo, "getOneByEmail").mockResolvedValue(new User("id", "email", "encrypted-password", [], ""))
+            const spyCompare = jest.spyOn(bcrypt, "compareSync").mockReturnValue(false)
+            try {
+                await userHandler.login(dto)
+            } catch(error) {
+                expect(error instanceof Unauthorized).toBe(true)
+                if (error instanceof Unauthorized) {
+                    expect(error.message).toBe("Incorrect password")
+                }                
+            }
+            expect(spyCompare.mock.calls.length).toBe(1)
+            expect(spyCompare.mock.calls[0]).toEqual(["password", "encrypted-password"])
+        })
+
+        it("when passowrd is a match should succeed", async () => {
+            const dto = { email: "email", password: "password" } 
+            const spyGet = jest.spyOn(userRepo, "getOneByEmail").mockResolvedValue(new User("id", "email", "encrypted-password", [], ""))
+            const spyCompare = jest.spyOn(bcrypt, "compareSync").mockReturnValue(true)
+            const userWithoutPassword = await userHandler.login(dto)
+            expect(userWithoutPassword).toEqual({
+                id: "id",
+                email: "email",
+                name: "",
+                roles: []
+            })            
+        })
+
     })
 })

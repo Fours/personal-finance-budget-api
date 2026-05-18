@@ -29,7 +29,7 @@ export default class UserRepository implements IUserRepository {
         }
     }
 
-    getOne(userId: string): Promise<User> {
+    getOne(userId: string): Promise<User | null> {
         return this.prisma.user.findUnique({
             where: {
                 id: userId
@@ -37,7 +37,7 @@ export default class UserRepository implements IUserRepository {
         })
     }
 
-    getOneByEmail(email: string): Promise<User> {
+    getOneByEmail(email: string): Promise<User | null> {
         return this.prisma.user.findUnique({
             where: {
                 email: email

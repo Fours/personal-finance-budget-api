@@ -4,9 +4,9 @@ export default interface IUserRepository {
 
     create(user: User): Promise<User>
 
-    getOne(userId: string): Promise<User>
+    getOne(userId: string): Promise<User | null>
 
-    getOneByEmail(email: string): Promise<User>
+    getOneByEmail(email: string): Promise<User | null>
 
     getAll(limit?: number, start?: number): Promise<User[]>
 }

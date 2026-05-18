@@ -52,11 +52,7 @@ export default class UserController {
         if (res.locals.user && Array.isArray(res.locals.user.roles) && res.locals.user.roles.includes("admin")) {
             try {
                 const user = await this.userHandler.getOne(userId)
-                if (user) {
-                    res.json(user)
-                } else {
-                    res.status(404).json({ message: "User not found" })
-                }
+                res.json(user)
             } catch(error) {
                 errorResponses(res, error)
             }

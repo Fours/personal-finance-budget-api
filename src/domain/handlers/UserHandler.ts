@@ -51,14 +51,14 @@ export default class UserHandler implements IUserHandler {
     }
 
     async login(dto: Login): Promise<UserWithoutPassword> {
-        if (!dto.email || !dto.password) {
+        if (typeof dto.email !== "string" || dto.email === "" || typeof dto.password !== "string" || dto.password === "") {
             throw new ValidationError("Email and password must be non-empty strings")
         }
         const user = await this.userRepo.getOneByEmail(dto.email)
-        if (!user) {
+        if (user === null) {
             throw new NotFound("Could not find user with that email")
         }
-        const isMatch = await bcrypt.compare(dto.password, user.password);
+        const isMatch = bcrypt.compareSync(dto.password, user.password);
         if (isMatch) {
             return {
                 id: user.id,
@@ -85,11 +85,15 @@ export default class UserHandler implements IUserHandler {
 
     async getOne(userId: string): Promise<UserWithoutPassword> {
         const user = await this.userRepo.getOne(userId)
-        return {
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            roles: user.roles
+        if (user !== null) {
+            return {
+                id: user.id,
+                email: user.email,
+                name: user.name,
+                roles: user.roles
+            }
+        } else {
+            throw new NotFound("User not found")
         }
     }
 }
