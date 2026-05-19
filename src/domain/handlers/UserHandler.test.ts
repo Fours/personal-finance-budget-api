@@ -150,6 +150,22 @@ describe("UserHandler", () => {
             expect(spyHash.mock.calls.length).toBe(1)
             expect(spyHash.mock.calls[0]).toEqual([ register.password, 10 ])
         })
+
+        it("should use an empty-string as default new user name", async () => {
+            const register = { email: "email@email.com", password: "password" }
+            const uuid = "5d6863bd-beec-4e07-bf4f-a39098d1da97"
+            const spyCreate = jest.spyOn(userRepo, "create").mockResolvedValue(new User("", "", "", [], "")) // return value is unused
+            const spyEmit = jest.spyOn(eventDispatcher, "emit").mockReturnValue()
+            const spyHash = jest.spyOn(bcrypt, "hashSync").mockReturnValue("password-hash")
+            const spyUuid = jest.spyOn(crypto, "randomUUID").mockReturnValue(uuid)
+            const user = await userHandler.register(register)
+            expect(user).toEqual({
+                id: uuid,
+                email: register.email,
+                name: "",
+                roles: ["user"]
+            })            
+        })
     })
 
     describe("login", () => {
@@ -243,6 +259,65 @@ describe("UserHandler", () => {
                 roles: []
             })            
         })
+    })
 
+    describe("getAll", () => {
+
+        it("should get users correctly and transform the result", async () => {
+
+            const user1 = new User("1", "email1", "password1", ["user"], "one")
+            const user2 = new User("2", "email2", "password2", ["admin"], "two")
+            const spyGet = jest.spyOn(userRepo, "getAll").mockResolvedValue([user1, user2])
+            const users = await userHandler.getAll(10, 20)
+            expect(users.length).toBe(2)
+            expect((users[0] as unknown as User).password).toBeUndefined()
+            expect(users[0].id).toBe(user1.id)
+            expect(users[0].email).toBe(user1.email)
+            expect(users[0].name).toBe(user1.name)
+            expect(users[0].roles).toEqual(user1.roles)
+            expect((users[1] as unknown as User).password).toBeUndefined()
+            expect(users[1].id).toBe(user2.id)
+            expect(users[1].email).toBe(user2.email)
+            expect(users[1].name).toBe(user2.name)
+            expect(users[1].roles).toEqual(user2.roles)
+            expect(spyGet.mock.calls.length).toBe(1)
+            expect(spyGet.mock.calls[0]).toEqual([10, 20])
+        })
+    })
+
+    describe("getOne", () => {
+
+        it("should get user correctly and transform the result", async () => {
+
+            const user1 = new User("1", "email1", "password1", ["user"], "one")
+            const spyGet = jest.spyOn(userRepo, "getOne").mockResolvedValue(user1)
+            const user = await userHandler.getOne("1")            
+            expect(user).not.toBeNull()
+            expect((user as unknown as User).password).toBeUndefined()
+            expect(user.id).toBe(user1.id)
+            expect(user.email).toBe(user1.email)
+            expect(user.name).toBe(user1.name)
+            expect(user.roles).toEqual(user1.roles)            
+            expect(spyGet.mock.calls.length).toBe(1)
+            expect(spyGet.mock.calls[0]).toEqual(["1"])
+        })
+
+        it("should fail with NotFound error when user is not found", async () => {
+
+            const spyGet = jest.spyOn(userRepo, "getOne").mockResolvedValue(null)
+            try {
+                const user = await userHandler.getOne("1")
+            } catch(error) {
+                expect(error instanceof NotFound).toBe(true)
+                if (error instanceof NotFound) {
+                    expect(error.message).toBe("User not found")
+                }
+                expect(spyGet.mock.calls.length).toBe(1)
+                expect(spyGet.mock.calls[0]).toEqual(["1"])
+            }
+            
+            
+            
+        })
     })
 })
