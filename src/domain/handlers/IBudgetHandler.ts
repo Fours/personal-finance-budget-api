@@ -9,4 +9,6 @@ export default interface IBudgetHandler {
     getAll(userId: string, limit?: number, start?: number): Promise<Budget[]>
 
     update(id: string, userId: string, dto: UpdateBudget): Promise<Budget>
+
+    delete(id: string, userId: string): Promise<void>
 }

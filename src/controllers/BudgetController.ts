@@ -54,4 +54,13 @@ export default class BudgetController {
             errorResponses(res, error)
         }
     }
+
+    async delete(req: Request<{id: string}>, res: Response<Message>): Promise<void> {
+        try {
+            await this.budgetHandler.delete(req.params.id, res.locals.user?.id)
+            res.json({ message: "Budget deleted" })
+        } catch(error) {
+            errorResponses(res, error)
+        }
+    }
 }

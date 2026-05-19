@@ -44,6 +44,10 @@ export default class BudgetHandler implements IBudgetHandler {
         }
     }
 
+    async delete(id: string, userId: string): Promise<void> {
+        return this.budgetRepo.delete(id, userId)
+    }
+
     private validateUpdate(dto: UpdateBudget): void {
         if (!dto) {
             throw new ValidationError("Update budget body is required.")
