@@ -49,7 +49,7 @@ export default class UserRepository implements IUserRepository {
         return this.prisma.user.findMany({
             take: limit,
             skip: start,
-            orderBy: { email: 'asc' }
+            orderBy: { email: "asc" }
         })
     }
 
