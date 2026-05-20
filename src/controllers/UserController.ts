@@ -1,7 +1,7 @@
 import type { Message } from "../dto/response/Message.ts";
 import type { Request, Response } from "express";
 import type IUserHandler from "../domain/handlers/IUserHandler";
-import type { User } from "../dto/response/User.ts";
+import type { User } from "../dto/response/User.ts"
 import validateUUID from "../lib/validateUUID.ts";
 import errorResponses from "../lib/errorResponses.ts";
 
