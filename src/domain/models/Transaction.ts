@@ -42,10 +42,6 @@ export default class Transaction {
         if (!validateUUID(id)) {
             throw new ValidationError("Transaction id must be a uuid")
         }
-        // const userId = typeof dto.userId === "string" ? dto.userId : ""
-        // if (!validateUUID(userId)) {
-        //     throw new ValidationError("Transaction userId must be a uuid")
-        // }
         const date = typeof dto.date === "string" ? dto.date : ""
         if(!validateDate(date)) {
             throw new ValidationError("Transaction date must be a valid date with the format YYYY-MM-DD")

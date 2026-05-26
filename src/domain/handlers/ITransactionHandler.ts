@@ -6,7 +6,7 @@ export default interface ITransactionHandler {
 
     create(userId: string, dto: CreateTransaction): Promise<Transaction>
 
-    update(id: string, dto: UpdateTransaction): Promise<Transaction>
+    update(id: string, userId: string, dto: UpdateTransaction): Promise<Transaction>
     
     getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]>
 

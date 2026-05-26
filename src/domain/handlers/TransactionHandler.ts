@@ -15,14 +15,14 @@ export default class TransactionHandler implements ITransactionHandler {
         this.transactionRepo = transactionRepo
     }
 
-    create(userId: string, dto: CreateTransaction): Promise<Transaction> {
+    async create(userId: string, dto: CreateTransaction): Promise<Transaction> {
         const transaction = Transaction.from(userId, dto)
         return this.transactionRepo.create(transaction)
     }
 
-    async update(id: string, dto: UpdateTransaction): Promise<Transaction> {
+    async update(id: string, userId: string, dto: UpdateTransaction): Promise<Transaction> {
         this.validateUpdate(dto)
-        return this.transactionRepo.update(id, dto.date, dto.merchant, dto.note, dto.amount, dto.categoryId)
+        return this.transactionRepo.update(id, userId, dto.date, dto.merchant, dto.note, dto.amount, dto.categoryId)
     }
     
     getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]> {
@@ -48,6 +48,9 @@ export default class TransactionHandler implements ITransactionHandler {
         }
         if (dto.categoryId !== undefined && (typeof dto.categoryId !== "string" || !validateUUID(dto.categoryId))) {
             throw new ValidationError("Transaction categoryId, if provided, must be a valid UUID")
+        }
+        if (dto.date === undefined && dto.merchant === undefined && dto.note === undefined && dto.amount === undefined && dto.categoryId === undefined) {
+            throw new ValidationError("Must provide one or more transaction properties")
         }
     }
 

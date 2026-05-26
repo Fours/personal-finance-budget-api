@@ -32,7 +32,7 @@ export default class TransactionRepository implements ITransactionRepository {
         }
     }
 
-    async update(id: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string): Promise<Transaction> {        
+    async update(id: string, userId: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string): Promise<Transaction> {        
         const updateObj: Record<string, any> = {}
         if (date !== undefined) updateObj["date"] = date;
         if (merchant !== undefined) updateObj["merchant"] = merchant;
@@ -41,13 +41,15 @@ export default class TransactionRepository implements ITransactionRepository {
         if (categoryId !== undefined) updateObj["categoryId"] = categoryId;
         try {
             const transaction = await this.prisma.transaction.update({
-                where: { id: id },
+                where: { id: id, userId: userId },
                 data: updateObj,
             });
             return transaction;
         } catch (error) {            
             if (error instanceof PrismaClientKnownRequestError && error.code === "P2003") {
                 throw new ForeignConstraintFailed("Must provide a valid existing categoryId")
+            } else if (error instanceof PrismaClientKnownRequestError && error.code === "P2025") {
+                throw new NotFound("Transaction was not found")
             } else {
                 throw error
             }
