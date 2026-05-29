@@ -232,13 +232,23 @@ describe("TransactionHandler", () => {
 
     describe("getAll", () => {
 
-
-        
+        it("should get all transactions correctly", async () => {
+            const transaction = new Transaction("id", "userId", "2026-05-25", "merchant", "note", 1, "ctgId", "account", "kind")
+            const spyGet = jest.spyOn(fakeRepo, "getAll").mockResolvedValue([transaction])
+            const result = await transactionHandler.getAll("userId", 10, 20)
+            expect(result).toEqual([transaction])
+            expect(spyGet.mock.calls.length).toBe(1)
+            expect(spyGet.mock.calls[0]).toEqual(["userId", 10, 20])
+        })
     })
 
     describe("delete", () => {
 
-
-        
+        it("should delete a transaction correctly", async () => {
+            const spyDelete = jest.spyOn(fakeRepo, "delete").mockResolvedValue()
+            const result = await transactionHandler.delete("id", "userId")
+            expect(spyDelete.mock.calls.length).toBe(1)
+            expect(spyDelete.mock.calls[0]).toEqual(["id", "userId"])
+        })
     })
 })
