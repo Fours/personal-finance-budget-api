@@ -31,7 +31,7 @@ export default class TransactionController {
             return
         }        
         try {
-            const updated = await this.transactionHandler.update(transactionId, req.body)
+            const updated = await this.transactionHandler.update(transactionId, res.locals.user?.id, req.body)
             res.json(updated)
         } catch(error) {            
             errorResponses(res, error)
