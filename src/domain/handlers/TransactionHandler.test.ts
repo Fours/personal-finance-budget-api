@@ -11,7 +11,8 @@ describe("TransactionHandler", () => {
         create(transaction: Transaction): Promise<Transaction> {
             throw new Error("Method not implemented.")
         }
-        update(id: string, userId: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string): Promise<Transaction> {
+        update(id: string, userId: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string, 
+            account?: string, kind?: string): Promise<Transaction> {
             throw new Error("Method not implemented.")
         }
         getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]> {
@@ -182,6 +183,62 @@ describe("TransactionHandler", () => {
             }
         })
 
+        it("when account is provided but not a string should fail with a ValidationError", async () => {
+            const dto: UpdateTransaction = { date: "2026-05-25", merchant: "merchant", note: "", amount: 1, 
+                categoryId: "5d6863bd-beec-4e07-bf4f-a39098d1da97", account: 1 } as unknown as UpdateTransaction
+            try {
+                const result = await transactionHandler.update("id", "userId", dto)
+                throw new Error("test failed")
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Transaction account, if provided, must be a non-empty string")
+                }
+            }
+        })
+
+        it("when account is an empty string should fail with a ValidationError", async () => {
+            const dto: UpdateTransaction = { date: "2026-05-25", merchant: "merchant", note: "", amount: 1, 
+                categoryId: "5d6863bd-beec-4e07-bf4f-a39098d1da97", account: "" }
+            try {
+                const result = await transactionHandler.update("id", "userId", dto)
+                throw new Error("test failed")
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Transaction account, if provided, must be a non-empty string")
+                }
+            }
+        })
+    
+        it("when kind is provided but not a string should fail with a ValidationError", async () => {
+            const dto: UpdateTransaction = { date: "2026-05-25", merchant: "merchant", note: "", amount: 1, 
+                categoryId: "5d6863bd-beec-4e07-bf4f-a39098d1da97", account: "account", kind: 1 } as unknown as UpdateTransaction
+            try {
+                const result = await transactionHandler.update("id", "userId", dto)
+                throw new Error("test failed")
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Transaction kind, if provided, must be one of [expense, income, transfer]")
+                }
+            }
+        })
+
+        it("when kind is an invalid string should fail with a ValidationError", async () => {
+            const dto: UpdateTransaction = { date: "2026-05-25", merchant: "merchant", note: "", amount: 1, 
+                categoryId: "5d6863bd-beec-4e07-bf4f-a39098d1da97", account: "account", kind: "no valid" }
+            try {
+                const result = await transactionHandler.update("id", "userId", dto)
+                throw new Error("test failed")
+            } catch(error) {
+                expect(error instanceof ValidationError).toBe(true)
+                if (error instanceof ValidationError) {
+                    expect(error.message).toBe("Transaction kind, if provided, must be one of [expense, income, transfer]")
+                }
+            }
+        })
+
         it("when all properties are undefined should fail with a ValidationError", async () => {
             const dto: UpdateTransaction = {}
             try {
@@ -196,7 +253,8 @@ describe("TransactionHandler", () => {
         })
 
         it("should succeed and update a transaction correctly", async () => {
-            const dto: UpdateTransaction = { date: "2026-05-25", merchant: "merchant", note: "", amount: 1, categoryId: "5d6863bd-beec-4e07-bf4f-a39098d1da97" }
+            const dto: UpdateTransaction = { date: "2026-05-25", merchant: "merchant", note: "", amount: 1, 
+                categoryId: "5d6863bd-beec-4e07-bf4f-a39098d1da97", account: "account", kind: "expense" }
             const transaction = new Transaction("id", "userId", "2026-05-25", "merchant", "", 1, "ctgId", "account", "kind")
             const spyUpdate = jest.spyOn(fakeRepo, "update").mockResolvedValue(transaction)            
             const result = await transactionHandler.update("id", "userId", dto)
@@ -210,6 +268,8 @@ describe("TransactionHandler", () => {
             expect(params[4]).toBe("")
             expect(params[5]).toBe(1)
             expect(params[6]).toBe("5d6863bd-beec-4e07-bf4f-a39098d1da97")
+            expect(params[7]).toBe("account")
+            expect(params[8]).toBe("expense")
         })
 
         it("when only one property is provided should succeed and update a transaction correctly", async () => {

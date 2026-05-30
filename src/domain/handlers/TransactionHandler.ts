@@ -6,6 +6,7 @@ import type ITransactionRepository from "../../repositories/ITransactionReposito
 import ValidationError from "../errors/ValidationError.ts";
 import Transaction from "../models/Transaction.ts";
 import type ITransactionHandler from "./ITransactionHandler";
+import { transactionKinds } from "../../lib/constants"
 
 export default class TransactionHandler implements ITransactionHandler {
     
@@ -32,7 +33,7 @@ export default class TransactionHandler implements ITransactionHandler {
     delete(id: string, userId: string): Promise<void> {
         return this.transactionRepo.delete(id, userId)
     }
-
+    
     private validateUpdate(dto: UpdateTransaction): void {
         if (dto.date !== undefined && (typeof dto.date !== "string" || !validateDate(dto.date))) {
             throw new ValidationError("Transaction date, if provided, must be a string in the format 'YYYY-MM-DD'")
@@ -49,10 +50,16 @@ export default class TransactionHandler implements ITransactionHandler {
         if (dto.categoryId !== undefined && (typeof dto.categoryId !== "string" || !validateUUID(dto.categoryId))) {
             throw new ValidationError("Transaction categoryId, if provided, must be a valid UUID")
         }
-        if (dto.date === undefined && dto.merchant === undefined && dto.note === undefined && dto.amount === undefined && dto.categoryId === undefined) {
+        if (dto.account !== undefined && (typeof dto.account !== "string" || dto.account === "")) {
+            throw new ValidationError("Transaction account, if provided, must be a non-empty string")
+        }
+        if (dto.kind !== undefined && (typeof dto.kind !== "string" || !transactionKinds.includes(dto.kind))) {
+            throw new ValidationError("Transaction kind, if provided, must be one of [expense, income, transfer]")
+        }
+        if (dto.date === undefined && dto.merchant === undefined && dto.note === undefined && dto.amount === undefined && dto.categoryId === undefined 
+            && dto.account === undefined && dto.kind === undefined) {
             throw new ValidationError("Must provide one or more transaction properties")
         }
-        // todo - add account and kind
     }
 
 }
