@@ -22,7 +22,7 @@ export default class TransactionHandler implements ITransactionHandler {
 
     async update(id: string, userId: string, dto: UpdateTransaction): Promise<Transaction> {
         this.validateUpdate(dto)
-        return this.transactionRepo.update(id, userId, dto.date, dto.merchant, dto.note, dto.amount, dto.categoryId)
+        return this.transactionRepo.update(id, userId, dto.date, dto.merchant, dto.note, dto.amount, dto.categoryId, dto.account, dto.kind)
     }
     
     getAll(userId: string, limit?: number, start?: number): Promise<Transaction[]> {
@@ -52,6 +52,7 @@ export default class TransactionHandler implements ITransactionHandler {
         if (dto.date === undefined && dto.merchant === undefined && dto.note === undefined && dto.amount === undefined && dto.categoryId === undefined) {
             throw new ValidationError("Must provide one or more transaction properties")
         }
+        // todo - add account and kind
     }
 
 }

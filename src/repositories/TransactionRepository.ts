@@ -32,13 +32,15 @@ export default class TransactionRepository implements ITransactionRepository {
         }
     }
 
-    async update(id: string, userId: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string): Promise<Transaction> {        
+    async update(id: string, userId: string, date?: string, merchant?: string, note?: string, amount?: number, categoryId?: string, account?: string, kind?: string): Promise<Transaction> {        
         const updateObj: Record<string, any> = {}
         if (date !== undefined) updateObj["date"] = date;
         if (merchant !== undefined) updateObj["merchant"] = merchant;
         if (note !== undefined) updateObj["note"] = note;
         if (amount !== undefined) updateObj["amount"] = amount;
         if (categoryId !== undefined) updateObj["categoryId"] = categoryId;
+        if (account !== undefined) updateObj["account"] = account;
+        if (kind !== undefined) updateObj["kind"] = kind;
         try {
             const transaction = await this.prisma.transaction.update({
                 where: { id: id, userId: userId },
